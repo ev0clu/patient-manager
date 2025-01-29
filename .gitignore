@@ -1,0 +1,12 @@
+# Nest.js
+backend/node_modules/
+backend/.env
+backend/dist
+backend/build
+
+# React Native
+frontend/node_modules/
+frontend/.env
+frontend/android/.gradle/
+frontend/android/app/build/
+frontend/ios/Pods/

@@ -1,0 +1,50 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "dist/app.ts",
+    "scripts": {
+        "nodemon": "nodemon src/app.ts",
+        "dev": "DEBUG=backend:* dotenv -e .env npm run nodemon",
+        "prisma:migrate": "dotenv -e .env -- prisma migrate dev",
+        "prisma:push": "dotenv -e .env -- prisma db push",
+        "prisma:studio": "dotenv -e .env -- prisma studio",
+        "build": "npx tsc",
+        "start": "node dist/app.js",
+        "lint": "eslint src/*.ts",
+        "lint:fix": "eslint --fix src/*.ts",
+        "format": "prettier --write .",
+        "test:watch": "dotenv -e .env.test -- jest --watchAll --detectOpenHandles",
+        "test": "dotenv -e .env.test -- jest --detectOpenHandles"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "description": "",
+    "dependencies": {
+        "body-parser": "^1.20.3",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "dotenv-cli": "^8.0.0",
+        "express": "^4.21.2",
+        "helmet": "^8.0.0",
+        "http-errors": "^2.0.0",
+        "nodemon": "^3.1.9",
+        "ts-node": "^10.9.2",
+        "zod": "^3.24.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.19.0",
+        "@types/body-parser": "^1.19.5",
+        "@types/cookie-parser": "^1.4.8",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.12.0",
+        "eslint": "^9.19.0",
+        "globals": "^15.14.0",
+        "prettier": "3.4.2",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.22.0"
+    }
+}
