@@ -4,10 +4,11 @@
     "main": "dist/app.ts",
     "scripts": {
         "nodemon": "nodemon src/app.ts",
-        "dev": "DEBUG=backend:* dotenv -e .env npm run nodemon",
+        "dev": "DEBUG=backend:* dotenv -e .env nodemon",
         "prisma:migrate": "dotenv -e .env -- prisma migrate dev",
         "prisma:push": "dotenv -e .env -- prisma db push",
-        "prisma:studio": "dotenv -e .env -- prisma studio",
+        "prisma:studio": "npx prisma studio",
+        "prisma:seed": "tsx prisma/seed.ts",
         "build": "npx tsc",
         "start": "node dist/app.js",
         "lint": "eslint src/*.ts",
@@ -37,7 +38,6 @@
         "jsonwebtoken": "^9.0.2",
         "nodemon": "^3.1.9",
         "prisma": "^6.3.0",
-        "ts-node": "^10.9.2",
         "zod": "^3.24.1"
     },
     "devDependencies": {
@@ -52,6 +52,8 @@
         "eslint": "^9.19.0",
         "globals": "^15.14.0",
         "prettier": "3.4.2",
+        "ts-node": "^10.9.2",
+        "tsx": "^4.19.2",
         "typescript": "^5.7.3",
         "typescript-eslint": "^8.22.0"
     }
