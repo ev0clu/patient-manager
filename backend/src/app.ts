@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import createHttpError from 'http-errors';
 import cors from 'cors';
 import authRouter from './routes/authRoutes';
+import { Prisma } from '@prisma/client';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 const PORT = Number(env.PORT) || 4000;
 const BASE_URL = env.BASE_URL || 'http://localhost';
@@ -47,6 +49,17 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 
 // Error handler
 app.use(function (err: Error, req: Request, res: Response) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        res.status(500).json({
+            error: `Prisma error code: ${err.code}`
+        });
+    }
+    if (err instanceof JsonWebTokenError) {
+        res.status(500).json({
+            error: err.name
+        });
+    }
+
     res.status(500).json({
         error: err.message
     });
