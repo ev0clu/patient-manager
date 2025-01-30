@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import createHttpError from 'http-errors';
 import cors from 'cors';
+import authRouter from './routes/authRoutes';
 
 const PORT = Number(env.PORT) || 4000;
 const BASE_URL = env.BASE_URL || 'http://localhost';
@@ -37,9 +38,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Routes
-app.get('/api/v1', (req: Request, res: Response) => {
-    res.send('Hello, TypeScript Express!');
-});
+app.use('/api/v1/auth', authRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
