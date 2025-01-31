@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import createHttpError from 'http-errors';
 import cors from 'cors';
 import { Prisma } from '@prisma/client';
-import { JsonWebTokenError } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { verifyJwtTokens } from './middlewares/authMiddleware';
 import authRouter from './routes/authRoutes';
 import appointmentRouter from './routes/appointmentRoutes';
@@ -52,14 +52,18 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 });
 
 // Error handler
-app.use(function (err: Error, req: Request, res: Response) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use(function (err: Error, req: Request, res: Response, next: NextFunction) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
         res.status(403).json({
             error: `Prisma error code: ${err.code}`
         });
-    }
-
-    if (err instanceof JsonWebTokenError) {
+    } else if (err instanceof TokenExpiredError) {
+        res.status(403).json({
+            message: 'Access denied. Refresh token has expired.',
+            error: 'refresh-token-expired'
+        });
+    } else if (err instanceof JsonWebTokenError) {
         if (err.message === 'jwt expired') {
             res.status(403).json({
                 message: 'Access denied. Refresh  token has expired.',
@@ -69,11 +73,11 @@ app.use(function (err: Error, req: Request, res: Response) {
         res.status(403).json({
             error: err.message
         });
+    } else {
+        res.status(500).json({
+            error: err.message
+        });
     }
-
-    res.status(500).json({
-        error: err.message
-    });
 });
 
 const server = app.listen(PORT, () => {
