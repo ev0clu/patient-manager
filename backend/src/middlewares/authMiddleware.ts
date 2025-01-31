@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { decodeJwtToken } from '../utils/auth';
+import { JwtPayload } from 'jsonwebtoken';
 
 export function verifyJwtTokens() {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +22,7 @@ export function verifyJwtTokens() {
         }
 
         try {
-            const decoded = decodeJwtToken(accessToken);
+            const decoded = decodeJwtToken(accessToken) as JwtPayload & { userId: string };
             req.userId = decoded.userId;
             next();
         } catch {
