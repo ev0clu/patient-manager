@@ -1,0 +1,17 @@
+services:
+    dev-db:
+        container_name: dev_postgresql_container
+        image: postgres:17.2-alpine3.21
+        environment:
+            POSTGRES_USER: ${DEV_DB_USER}
+            POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
+            POSTGRES_DB: ${DEV_DB_NAME}
+            POSTGRES_PORT: ${DEV_DB_PORT}
+        ports:
+            - ${DEV_DB_PORT}:5432
+        restart: unless-stopped
+        volumes:
+            - dev_data:/var/lib/postgresql/data
+
+volumes:
+    dev_data:

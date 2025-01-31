@@ -1,0 +1,19 @@
+services:
+    test-db:
+        container_name: test_postgresql_container
+        image: postgres:17.2-alpine3.21
+        env_file:
+            - .env.test
+        environment:
+            POSTGRES_USER: ${TEST_DB_USER}
+            POSTGRES_PASSWORD: ${TEST_DB_PASSWORD}
+            POSTGRES_DB: ${TEST_DB_NAME}
+            POSTGRES_PORT: ${TEST_DB_PORT}
+        ports:
+            - ${TEST_DB_PORT}:5432
+        restart: unless-stopped
+        volumes:
+            - test_data:/var/lib/postgresql/data
+
+volumes:
+    test_data:
