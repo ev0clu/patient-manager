@@ -65,7 +65,7 @@ jobs:
           echo "TEST_USERNAME=test-user" >> backend/.env.test
           echo "TEST_USER_EMAIL=test@example.com" >> backend/.env.test
           echo "TEST_USER_PASSWORD=1234" >> backend/.env.test
-          echo "FRONTEND_BASE_URL=192.100.2.1" >> backend/.env.test
+          echo "FRONTEND_BASE_URL=http://192.100.2.1" >> backend/.env.test
           echo "💡 .env.test file has been created inside the backend folder."
 
       - name: Wait for PostgreSQL to be ready
