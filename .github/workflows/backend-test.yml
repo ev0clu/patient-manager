@@ -54,11 +54,17 @@ jobs:
       - name: Create .env.test file inside backend folder
         run: |
           echo "NODE_ENV=test" > backend/.env.test
-          echo "PORT=3000" >> backend/.env.test
-          echo "BASE_URL=http://localhost:3000" >> backend/.env.test
+          echo "PORT=5000" >> backend/.env.test
+          echo "BASE_URL=http://localhost" >> backend/.env.test
           echo "DATABASE_URL=postgres://testuser:testpassword@localhost:5432/testdb" >> backend/.env.test
           echo "SALT_ROUNDS=10" >> backend/.env.test
           echo "JWT_SECRET=your-jwt-secret" >> backend/.env.test
+          echo "ADMIN_USERNAME=admin" >> backend/.env.test
+          echo "ADMIN_EMAIL=admin@patient.com" >> backend/.env.test
+          echo "ADMIN_PASSWORD=admin1234" >> backend/.env.test
+          echo "TEST_USERNAME=test-user" >> backend/.env.test
+          echo "TEST_USER_EMAIL=test@example.com" >> backend/.env.test
+          echo "TEST_USER_PASSWORD=1234" >> backend/.env.test
           echo "FRONTEND_BASE_URL=192.100.2.1" >> backend/.env.test
           echo "💡 .env.test file has been created inside the backend folder."
 
