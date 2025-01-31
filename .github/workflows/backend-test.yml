@@ -1,0 +1,77 @@
+name: Backend Test for Pull Request and Push to main
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        options: --health-cmd="pg_isready -U testuser" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies (clean install)
+        run: |
+          cd backend 
+          npm install
+
+      - name: Create .env.test file inside backend folder
+        run: |
+          echo "NODE_ENV=test" > backend/.env.test
+          echo "PORT=3000" >> backend/.env.test
+          echo "BASE_URL=http://localhost:3000" >> backend/.env.test
+          echo "DATABASE_URL=postgres://testuser:testpassword@localhost:5432/testdb" >> backend/.env.test
+          echo "SALT_ROUNDS=10" >> backend/.env.test
+          echo "JWT_SECRET=your-jwt-secret" >> backend/.env.test
+          echo "FRONTEND_BASE_URL=192.100.2.1" >> backend/.env.test
+          echo "💡 .env.test file has been created inside the backend folder."
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h localhost -p 5432 -U testuser; do
+            echo "Postgres is not ready yet. Waiting..."
+            sleep 5
+          done
+          echo "PostgreSQL is ready!"
+
+      - name: Run Prisma Migrate and Seed Database
+        run: |
+          cd backend
+          npm run prisma:push-test --env-file .env.test
+          echo "Database migration and seeding completed."
+
+      - name: Run tests
+        run: |
+          cd backend 
+          npm run test
