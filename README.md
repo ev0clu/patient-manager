@@ -3,6 +3,14 @@
 A health care full stack CRUD app has built with React Native framework, Nativewind, Nest.js, PostgreSQL, Docker and more. The app allows users to log in and booking an appointment to doctors or cancel a previous one. There is an admin part of the application also, where doctors can accept or reject the appointment. Additionally, users can update or remove their profile.
 
 <!--
+### Login:
+- **Admin**:
+   - email: admin@patient.com
+   - password: admin1234
+- **User**:
+   - email: test@example.com
+   - password: 1234
+
 ### Demo video: [Link](https://github.com/ev0clu/patient-manager/blob/main/demo.mp4)
 -->
 
@@ -44,9 +52,10 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
    ```
 
 6. Run `npm run prisma:migrate` to migrate and push the schema to database
-7. Run `npm run dev`
-8. Backend server running at `http://localhost:5000/`
-9. Run `npm run prisma:studio` if you would like to see the database content
+7. Run `npm run prisma:seed` to add admin registration into the database. _email_: `admin@patient.com`, _password_: `admin1234`
+8. Run `npm run dev`
+9. Backend server running at `http://localhost:5000/`
+10. Run `npm run prisma:studio` if you would like to see the database content
 
 <!--
 #### How to run backend test
