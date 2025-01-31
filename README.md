@@ -45,10 +45,10 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
 2. Navigate to **backend root** folder
 3. Create **.env** file based on the **.env.example**
 4. Run `npm install` command in your terminal
-5. Run _docker-compose.yml_ file:
+5. Run _docker-compose.dev.yml_ file:
 
    ```
-   docker compose --env-file .env -f docker-compose.yml up -d
+   docker compose --env-file .env -f docker-compose.dev.yml -p patient-manager-dev up -d
    ```
 
 6. Run `npm run prisma:migrate` to migrate and push the schema to database
@@ -57,19 +57,16 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
 9. Backend server running at `http://localhost:5000/`
 10. Run `npm run prisma:studio` if you would like to see the database content
 
-<!--
 #### How to run backend test
 
 1. Navigate to **backend root** folder
 2. Create **.env.test** file based on the **.env.test.example**
 3. Run _docker-compose.test.yml_ file from **backend root** folder:
    ```
-   docker compose --env-file .env.test -f docker-compose.test.yml up -d
+   docker compose --env-file .env.test -f docker-compose.test.yml -p patient-manager-test up -d
    ```
 4. Run `npm run prisma:push-test` to push schema to database
-5. Run `npm run prisma:studio-test` if you would like to see the database content
-6. Run `npm run test` to run unit test
--->
+5. Run `npm run test` to run unit test
 
 ### Frontend
 
@@ -93,6 +90,6 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
 - [PostgreSQL](https://www.postgresql.org/)
 - [JWT](https://www.npmjs.com/package/jsonwebtoken)
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
-<!--- [Jest](https://jestjs.io/docs/getting-started)
-[Supertest](https://www.npmjs.com/package/supertest)-->
+- [Jest](https://jestjs.io/docs/getting-started)
+- [Supertest](https://www.npmjs.com/package/supertest)
 - [Zod](https://zod.dev/)
