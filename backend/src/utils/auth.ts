@@ -16,6 +16,11 @@ export function generateJwtRefreshToken(userId: string) {
 }
 
 export function decodeJwtToken(token: string) {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as jwt.JwtPayload & { userId: string };
+    const decoded = jwt.verify(token, env.JWT_SECRET);
+
+    if (typeof decoded !== 'string' && 'userId' in decoded) {
+        return decoded as jwt.JwtPayload & { userId: string };
+    }
+
     return decoded;
 }
