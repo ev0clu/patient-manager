@@ -4,7 +4,6 @@ backend/.env
 backend/.env.test
 backend/dist
 backend/build
-backend/package-lock.json
 
 # React Native
 frontend/node_modules/
@@ -12,4 +11,3 @@ frontend/.env
 frontend/android/.gradle/
 frontend/android/app/build/
 frontend/ios/Pods/
-frontend/package-lock.json
