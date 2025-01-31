@@ -26,10 +26,11 @@ model User {
 }
 
 model Appointment {
-  id          String  @id @default(uuid())
-  doctor      String
-  description String?
-  status      Status  @default(PENDING)
+  id              String   @id @default(uuid())
+  doctor          String
+  description     String?
+  appointmentDate DateTime
+  status          Status   @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
