@@ -20,8 +20,8 @@ export const userRegistrationSchema = z.object({
                 try {
                     const phoneNumber = phoneUtil.parse(number);
                     return phoneUtil.isValidNumber(phoneNumber);
-                } catch (error) {
-                    return false;
+                } catch (err) {
+                    return err;
                 }
             },
             { message: 'Invalid phone number' }

@@ -1,4 +1,5 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import type { Express, NextFunction, Request, Response } from 'express';
+import express from 'express';
 import { env } from './utils/env';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
@@ -51,7 +52,7 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 });
 
 // Error handler
-app.use(function (err: Error, req: Request, res: Response, next: NextFunction) {
+app.use(function (err: Error, req: Request, res: Response) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
         res.status(403).json({
             error: `Prisma error code: ${err.code}`

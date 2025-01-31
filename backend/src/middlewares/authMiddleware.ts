@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { decodeJwtToken } from '../utils/auth';
-import { JwtPayload } from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
 
 export function verifyJwtTokens() {
     return (req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import prisma from '../../prisma/prisma';
 import { appointmentSchema } from '../schemas/appointmentSchema';
 import { env } from '../utils/env';
