@@ -51,15 +51,22 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 });
 
 // Error handler
-app.use(function (err: Error, req: Request, res: Response) {
+app.use(function (err: Error, req: Request, res: Response, next: NextFunction) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        res.status(500).json({
+        res.status(403).json({
             error: `Prisma error code: ${err.code}`
         });
     }
+
     if (err instanceof JsonWebTokenError) {
-        res.status(500).json({
-            error: err.name
+        if (err.message === 'jwt expired') {
+            res.status(403).json({
+                message: 'Access denied. Refresh  token has expired.',
+                error: 'refresh-token-expired'
+            });
+        }
+        res.status(403).json({
+            error: err.message
         });
     }
 
