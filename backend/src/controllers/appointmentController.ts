@@ -28,8 +28,8 @@ export const getAppointment = async (req: Request, res: Response, next: NextFunc
             });
         }
 
-        res.status(500).json({
-            error: `Appointment does not exist`
+        res.status(403).json({
+            error: `Access denied`
         });
     } catch (err) {
         next(err);
