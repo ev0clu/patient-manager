@@ -5,9 +5,11 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import createHttpError from 'http-errors';
 import cors from 'cors';
-import authRouter from './routes/authRoutes';
 import { Prisma } from '@prisma/client';
 import { JsonWebTokenError } from 'jsonwebtoken';
+import { verifyJwtTokens } from './middlewares/authMiddleware';
+import authRouter from './routes/authRoutes';
+import appointmentRouter from './routes/appointmentRoutes';
 
 const PORT = Number(env.PORT) || 4000;
 const BASE_URL = env.BASE_URL || 'http://localhost';
@@ -19,7 +21,7 @@ const app: Express = express();
 app.use(helmet());
 app.use(
     cors({
-        origin: [`http://${env.FRONTEND_BASE_URL}:8081`, 'http://localhost:8081'], // Need to use direct IP address instead of localhost
+        origin: [`${env.FRONTEND_BASE_URL}:8081`, 'http://localhost:8081'], // Need to use direct IP address instead of localhost
         credentials: true, // Allow cookies to be sent with requests
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Allowed HTTP methods
         allowedHeaders: [
@@ -41,6 +43,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/appointments', verifyJwtTokens(), appointmentRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
