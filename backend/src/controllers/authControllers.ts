@@ -75,31 +75,24 @@ export const refreshAccessToken = async (req: Request, res: Response, next: Next
     const refreshToken = req.headers['x-refresh-token'] as string;
 
     if (!refreshToken) {
-        res.status(401).json({
-            message: 'Access Denied. No refresh token provided.',
+        res.status(403).json({
+            message: 'Access denied. No refresh token provided.',
             error: 'refresh-token-missing'
         });
     }
 
     try {
-        const currentTime = Math.floor(Date.now() / 1000);
-
         const decodedRefreshToken = decodeJwtToken(refreshToken);
 
-        if (currentTime > decodedRefreshToken.exp) {
-            res.status(401).json({
-                message: 'Access Denied. Refresh  token has expired.',
-                error: 'refresh-token-expired'
-            });
+        if (typeof decodedRefreshToken !== 'string') {
+            const accessToken = generateJwtAccessToken(decodedRefreshToken.userId);
+
+            res.status(200)
+                .header('X-Refresh-Token', refreshToken)
+                .header('Authorization', accessToken)
+                .json({ message: 'Access token refreshed successfully' });
         }
-
-        const accessToken = generateJwtAccessToken(decodedRefreshToken.userId);
-
-        res.status(200)
-            .header('X-Refresh-Token', refreshToken)
-            .header('Authorization', accessToken)
-            .json({ message: 'Access token refreshed successfully' });
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        next(err);
     }
 };
