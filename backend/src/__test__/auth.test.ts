@@ -226,7 +226,7 @@ describe('Test auth middleware', () => {
             .set('X-Refresh-Token', mockRefreshToken);
 
         expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(401);
+        expect(res.status).toEqual(500);
         expect(res.body.error).toEqual(`access-token-expired`);
     });
 });

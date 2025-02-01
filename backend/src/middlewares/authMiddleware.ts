@@ -26,10 +26,7 @@ export function verifyJwtTokens() {
             req.userId = decoded.userId;
             next();
         } catch {
-            res.status(401).json({
-                message: 'Access token expired',
-                error: 'access-token-expired'
-            });
+            next(new Error('access-token-expired'));
         }
     };
 }
