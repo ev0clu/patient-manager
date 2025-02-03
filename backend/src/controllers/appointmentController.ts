@@ -17,22 +17,15 @@ export const getAppointment = async (req: Request, res: Response, next: NextFunc
         });
 
         if (user.email === env.ADMIN_EMAIL || appointment.userId === userId) {
-            if (!appointment) {
-                res.status(500).json({
-                    error: `Appointment does not exist`
-                });
-            }
-
             res.status(200).json({
                 appointment
             });
         }
-
         res.status(403).json({
             error: `Access denied`
         });
-    } catch (err) {
-        next(err);
+    } catch {
+        next(new Error('Appointment does not exist'));
     }
 };
 
@@ -74,14 +67,13 @@ export const createAppointment = async (req: Request, res: Response, next: NextF
     const userId = req.userId;
 
     const body = appointmentSchema.parse(req.body);
-    const { doctor, description, status, appointmentDate } = body;
+    const { doctor, description, appointmentDate } = body;
 
     try {
         const appointment = await prisma.appointment.create({
             data: {
                 doctor,
                 description,
-                status,
                 appointmentDate,
                 user: { connect: { id: userId } }
             }
