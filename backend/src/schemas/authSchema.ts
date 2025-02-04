@@ -3,6 +3,8 @@ import libphonenumber from 'google-libphonenumber';
 
 const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
 
+const RoleValues = ['USER', 'ADMIN'] as const;
+
 export const userRegistrationSchema = z.object({
     username: z
         .string()
@@ -25,7 +27,8 @@ export const userRegistrationSchema = z.object({
                 }
             },
             { message: 'Invalid phone number' }
-        )
+        ),
+    role: z.optional(z.enum(RoleValues))
 });
 
 export const userLoginSchema = z.object({
