@@ -6,11 +6,10 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-
-import "../global.css";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import { AuthProvider } from "@/context/AuthProvider";
+import "../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,13 +35,17 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DarkTheme}>
       <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </SafeAreaProvider>
+        <AuthProvider>
+          <SafeAreaProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </SafeAreaProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );
