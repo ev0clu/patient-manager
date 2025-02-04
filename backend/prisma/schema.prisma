@@ -20,6 +20,7 @@ model User {
   username     String
   phone        String
   appointments Appointment[]
+  role         Role          @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,6 +38,11 @@ model Appointment {
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 enum Status {
