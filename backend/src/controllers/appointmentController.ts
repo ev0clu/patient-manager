@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import prisma from '../../prisma/prisma';
 import { appointmentSchema } from '../schemas/appointmentSchema';
-import { env } from '../utils/env';
+import { ROLE } from '../constants/role';
 
 export const getAppointment = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -16,7 +16,7 @@ export const getAppointment = async (req: Request, res: Response, next: NextFunc
             where: { id }
         });
 
-        if (user.email === env.ADMIN_EMAIL || appointment.userId === userId) {
+        if (user.role === ROLE.admin || appointment.userId === userId) {
             res.status(200).json({
                 appointment
             });
@@ -37,7 +37,7 @@ export const getAllAppointments = async (req: Request, res: Response, next: Next
             where: { id: userId }
         });
 
-        if (user.email === env.ADMIN_EMAIL) {
+        if (user.role === ROLE.admin) {
             const appointments = await prisma.appointment.findMany({
                 orderBy: {
                     createdAt: 'desc'

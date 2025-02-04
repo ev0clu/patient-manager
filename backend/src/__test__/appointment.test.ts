@@ -572,15 +572,16 @@ describe('GET /', () => {
 
         // Admin preparation
         await request(server).post('/api/v1/auth/register').send({
-            username: 'admin',
-            email: 'admin@patient.com',
+            username: 'admin2',
+            email: 'admin2@patient.com',
             password: '4321',
-            phone: '+36504323445'
+            phone: '+36504323445',
+            role: 'ADMIN'
         });
 
         const resLoginAdmin = await request(server)
             .post('/api/v1/auth/login')
-            .send({ email: 'admin@patient.com', password: '4321' });
+            .send({ email: 'admin2@patient.com', password: '4321' });
 
         const accessTokenAdmin = resLoginAdmin.headers['authorization'];
         const refreshTokenAdmin = resLoginAdmin.headers['x-refresh-token'];

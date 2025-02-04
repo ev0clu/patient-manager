@@ -8,7 +8,7 @@ import { userLoginSchema, userRegistrationSchema } from '../schemas/authSchema';
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     const body = userRegistrationSchema.parse(req.body);
 
-    const { username, email, password, phone } = body;
+    const { username, email, password, phone, role } = body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, Number(env.SALT_ROUNDS));
@@ -24,11 +24,11 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
         }
 
         await prisma.user.create({
-            data: { username, email, password: hashedPassword, phone }
+            data: { username, email, password: hashedPassword, phone, role }
         });
 
         res.status(201).json({
-            message: 'User created successfully'
+            message: `${role === 'ADMIN' ? 'Admin' : 'User'} created successfully`
         });
     } catch (err) {
         next(err);

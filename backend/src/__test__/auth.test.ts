@@ -32,6 +32,36 @@ describe('POST /register', () => {
         });
     });
 
+    test('should register admin ', async () => {
+        const res = await request(server).post('/api/v1/auth/register').send({
+            username: 'admin',
+            email: 'admin@test.com',
+            password: '1234',
+            phone: '+36502305986',
+            role: 'ADMIN'
+        });
+
+        expect(res.headers['content-type']).toMatch(/json/);
+        expect(res.status).toEqual(201);
+        expect(res.body).toEqual({
+            message: 'Admin created successfully'
+        });
+    });
+
+    test('should return error because of invalid role ', async () => {
+        const res = await request(server).post('/api/v1/auth/register').send({
+            username: 'invalid user role',
+            email: 'invalid@test.com',
+            password: '1234',
+            phone: '+36502305986',
+            role: 'TEST'
+        });
+
+        expect(res.headers['content-type']).toMatch(/json/);
+        expect(res.status).toEqual(400);
+        expect(res.body.error).toEqual(`Invalid data`);
+    });
+
     test('should return user already exist code', async () => {
         const res = await request(server)
             .post('/api/v1/auth/register')
@@ -85,6 +115,16 @@ describe('POST /register', () => {
         const res = await request(server)
             .post('/api/v1/auth/register')
             .send({ username: 'john2', email: '', password: '', phone: '' });
+
+        expect(res.headers['content-type']).toMatch(/json/);
+        expect(res.status).toEqual(400);
+        expect(res.body.error).toEqual(`Invalid data`);
+    });
+
+    test('should return error because user phone is empty', async () => {
+        const res = await request(server)
+            .post('/api/v1/auth/register')
+            .send({ username: 'john2', email: 'test@tester.net', password: '1234', phone: '' });
 
         expect(res.headers['content-type']).toMatch(/json/);
         expect(res.status).toEqual(400);
