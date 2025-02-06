@@ -11,7 +11,8 @@ async function main() {
             username: env.ADMIN_USERNAME,
             email: env.ADMIN_EMAIL,
             password: adminHashedPassword,
-            phone: '+36501234567'
+            phone: '+36501234567',
+            role: 'ADMIN'
         }
     });
 
