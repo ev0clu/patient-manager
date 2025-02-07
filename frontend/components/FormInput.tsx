@@ -23,7 +23,7 @@ const FormInput = ({
 }: FormInputProps) => {
   return (
     <TextInput
-      className="border rounded-md px-4 py-2 border-stone-700 font-semibold text-base"
+      className="border rounded-md px-4 py-2 border-stone-700 font-semibold text-base text-white"
       onBlur={onBlur}
       onChangeText={onChangeText}
       value={value}
