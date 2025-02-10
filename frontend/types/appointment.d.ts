@@ -2,10 +2,11 @@ type Status = "PENDING" | "SCHEDULED" | "CANCELLED";
 
 type Appointment = {
   id: number;
-  doctor: string;
+  doctorID: string;
   description?: string;
   status: Status;
-  appointmentDate: Date;
+  slotId: string;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
 };
