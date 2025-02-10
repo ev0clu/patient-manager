@@ -26,18 +26,44 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Doctor {
+  id           String        @id @default(uuid())
+  name         String
+  image        String
+  slots        Slot[]
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Appointment {
-  id              String   @id @default(uuid())
-  doctor          String
-  description     String?
-  appointmentDate DateTime
-  status          Status   @default(PENDING)
+  id          String  @id @default(uuid())
+  doctor      Doctor? @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  doctorId    String?
+  description String?
+  status      Status  @default(PENDING)
+  slot        Slot?   @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId      String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Slot {
+  id     String   @id @default(uuid())
+  date   DateTime
+  booked Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  doctor      Doctor?      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  doctorId    String?
+  appointment Appointment?
 }
 
 enum Role {
