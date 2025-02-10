@@ -81,6 +81,30 @@ export const fetchDeleteAppointment = async (
   return body.appointment;
 };
 
+export const fetchGetAllDoctors = async (
+  accessToken: string,
+  refreshToken: string
+): Promise<Doctor[]> => {
+  const response = await fetch(`${env.EXPO_PUBLIC_API_URL}/doctors`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${accessToken}`,
+      "X-Refresh-Token": `${refreshToken}`,
+    },
+    credentials: "include",
+    mode: "cors",
+  });
+
+  const body = await response.json();
+
+  if (!response.ok) {
+    throw new Error(`${body.error}`);
+  }
+
+  return body.doctors;
+};
+
 export const fetchPostCreateAppointment = async (
   accessToken: string,
   refreshToken: string,
@@ -95,9 +119,9 @@ export const fetchPostCreateAppointment = async (
     },
     credentials: "include",
     body: JSON.stringify({
-      doctor: data.doctor,
+      doctorId: data.doctorId,
       description: data.description,
-      appointmentDate: data.appointmentDate,
+      slotId: data.slotId,
     }),
     mode: "cors",
   });
@@ -125,10 +149,10 @@ export const fetchPutUpdateAppointment = async (
     },
     credentials: "include",
     body: JSON.stringify({
-      doctor: data.doctor,
+      doctorId: data.doctorId,
       description: data.description,
       status: data.status,
-      appointmentDate: data.appointmentDate,
+      slotId: data.slotId,
     }),
     mode: "cors",
   });
