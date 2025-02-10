@@ -3,8 +3,8 @@ import { z } from 'zod';
 const StatusValues = ['PENDING', 'SCHEDULED', 'CANCELLED'] as const;
 
 export const appointmentSchema = z.object({
-    doctor: z.string().trim().min(4, 'Doctor name is required to be min 4 characters'),
+    doctorId: z.string().trim().nonempty('Doctor Id is required'),
     description: z.optional(z.string().trim()),
     status: z.optional(z.enum(StatusValues)),
-    appointmentDate: z.string().datetime()
+    slotId: z.string().trim().nonempty('Slot Id is required')
 });

@@ -13,7 +13,8 @@ export const getAppointment = async (req: Request, res: Response, next: NextFunc
         });
 
         const appointment = await prisma.appointment.findUnique({
-            where: { id }
+            where: { id },
+            include: { doctor: true, user: true, slot: true }
         });
 
         if (user.role === ROLE.admin || appointment.userId === userId) {
@@ -41,7 +42,8 @@ export const getAllAppointments = async (req: Request, res: Response, next: Next
             const appointments = await prisma.appointment.findMany({
                 orderBy: {
                     createdAt: 'desc'
-                }
+                },
+                include: { doctor: true, user: true, slot: true }
             });
             res.status(200).json({
                 appointments
@@ -52,7 +54,8 @@ export const getAllAppointments = async (req: Request, res: Response, next: Next
             where: { userId },
             orderBy: {
                 createdAt: 'desc'
-            }
+            },
+            include: { doctor: true, user: true, slot: true }
         });
 
         res.status(200).json({
@@ -67,20 +70,55 @@ export const createAppointment = async (req: Request, res: Response, next: NextF
     const userId = req.userId;
 
     const body = appointmentSchema.parse(req.body);
-    const { doctor, description, appointmentDate } = body;
+    const { doctorId, description, slotId } = body;
 
     try {
-        const appointment = await prisma.appointment.create({
-            data: {
-                doctor,
-                description,
-                appointmentDate,
-                user: { connect: { id: userId } }
-            }
+        const doctor = await prisma.doctor.findUnique({
+            where: { id: doctorId }
         });
-        res.status(201).json({
-            appointment
+
+        if (!doctor) {
+            res.status(500).json({
+                error: `Doctor does not exist`
+            });
+        }
+
+        const slot = await prisma.slot.findUnique({
+            where: { id: slotId }
         });
+
+        if (!slot) {
+            res.status(500).json({
+                error: `Slot does not exist`
+            });
+        }
+
+        if (slot.booked || slot.doctorId !== doctorId) {
+            res.status(500).json({
+                error: `Appointment cannot be booked to this doctor in that slot`
+            });
+        } else {
+            const [, appointment] = await prisma.$transaction([
+                prisma.slot.update({
+                    where: { id: slotId },
+                    data: { booked: true }
+                }),
+
+                prisma.appointment.create({
+                    data: {
+                        doctor: { connect: { id: doctorId } },
+                        description,
+                        user: { connect: { id: userId } },
+                        slot: { connect: { id: slotId } }
+                    },
+                    include: { doctor: true, user: true, slot: true }
+                })
+            ]);
+
+            res.status(201).json({
+                appointment
+            });
+        }
     } catch (err) {
         next(err);
     }
@@ -91,28 +129,74 @@ export const updateAppointment = async (req: Request, res: Response, next: NextF
     const userId = req.userId;
 
     const body = appointmentSchema.parse(req.body);
-    const { doctor, description, status, appointmentDate } = body;
+    const { doctorId, description, status, slotId } = body;
 
     try {
+        const doctor = await prisma.doctor.findUnique({
+            where: { id: doctorId }
+        });
+
+        if (!doctor) {
+            res.status(500).json({
+                error: `Doctor does not exist`
+            });
+        }
+
+        const slot = await prisma.slot.findUnique({
+            where: { id: slotId }
+        });
+
+        if (!slot) {
+            res.status(500).json({
+                error: `Slot does not exist`
+            });
+        }
+
         const appointment = await prisma.appointment.findUnique({
             where: { id, userId }
         });
+
         if (!appointment) {
             res.status(500).json({
                 error: `Appointment does not exist`
             });
         }
 
-        const updateAppointment = await prisma.appointment.update({
-            where: {
-                id
-            },
+        if (appointment.slotId !== slotId && slot.booked) {
+            res.status(500).json({
+                error: `Appointment cannot be booked to this doctor in that slot`
+            });
+        } else {
+            const [, , updatedAppointment] = await prisma.$transaction([
+                // Update previous slot to "booked: false"
+                prisma.slot.update({
+                    where: { id: appointment.slotId },
+                    data: { booked: false }
+                }),
 
-            data: { doctor, description, status, appointmentDate }
-        });
-        res.status(200).json({
-            appointment: updateAppointment
-        });
+                // Update new slot to "booked: true"
+                prisma.slot.update({
+                    where: { id: slotId },
+                    data: { booked: true }
+                }),
+
+                // Update appointment and return it
+                prisma.appointment.update({
+                    where: { id },
+                    data: {
+                        doctorId,
+                        description,
+                        status,
+                        slotId
+                    },
+                    include: { doctor: true, user: true, slot: true }
+                })
+            ]);
+
+            res.status(200).json({
+                appointment: updatedAppointment
+            });
+        }
     } catch (err) {
         next(err);
     }
@@ -130,14 +214,14 @@ export const deleteAppointment = async (req: Request, res: Response, next: NextF
             res.status(500).json({
                 error: `Appointment does not exist`
             });
+        } else {
+            await prisma.appointment.delete({
+                where: { id }
+            });
+            res.status(200).json({
+                message: 'Appointment deleted successfully'
+            });
         }
-
-        await prisma.appointment.delete({
-            where: { id }
-        });
-        res.status(200).json({
-            message: 'Appointment deleted successfully'
-        });
     } catch (err) {
         next(err);
     }
