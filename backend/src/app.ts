@@ -11,6 +11,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { verifyJwtTokens } from './middlewares/authMiddleware';
 import authRouter from './routes/authRoutes';
 import appointmentRouter from './routes/appointmentRoutes';
+import doctorRouter from './routes/doctorRoutes';
 
 const PORT = Number(env.PORT) || 4000;
 const BASE_URL = env.BASE_URL || 'http://localhost';
@@ -45,6 +46,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/appointments', verifyJwtTokens(), appointmentRouter);
+app.use('/api/v1/doctors', verifyJwtTokens(), doctorRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
