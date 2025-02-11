@@ -158,63 +158,54 @@ const Appointments = () => {
     <SafeAreaView className="h-full">
       <ContainerView className="justify-start">
         <Text className="text-3xl font-bold text-white mb-5">Appointments</Text>
-        {isPending ? (
-          <ActivityIndicator
-            animating={isPending}
-            color="#059669"
-            size="large"
-            className="ml-2"
-          />
-        ) : (
-          <View>
-            {error && <ErrorText title={error.message} />}
-            {appointments?.length === 0 ? (
-              <View>
-                <Text className="text-white/50">
-                  There is still no any appointments.
-                </Text>
-              </View>
-            ) : (
-              <View className="p-2 h-full">
-                <FlatList
-                  data={appointments}
-                  renderItem={({ item }) => (
-                    <AppointmentItem
-                      item={item}
-                      showDeleteAlert={showDeleteAlert}
-                    />
-                  )}
-                  keyExtractor={(task) => task.id.toString()}
-                  ListHeaderComponent={() => (
-                    <View className="flex p-1 gap-3 flex-row w-full justify-between bg-primary">
-                      <View className="flex flex-row flex-1 justify-between">
-                        <Text className="font-bold text-lg w-16 text-center">
-                          Status
-                        </Text>
-                        <Text className="font-bold text-lg w-16 text-center">
-                          Title
-                        </Text>
-                        <Text className="font-bold text-lg w-16 text-center">
-                          Priority
-                        </Text>
-                      </View>
-                      <Text className="font-bold text-lg w-16 text-center">
-                        Action
+        <View>
+          {error && <ErrorText title={error.message} />}
+          {appointments?.length === 0 ? (
+            <View>
+              <Text className="text-white/50">
+                There is still no any appointments.
+              </Text>
+            </View>
+          ) : (
+            <View className="p-2 h-full">
+              <FlatList
+                data={appointments}
+                renderItem={({ item }) => (
+                  <AppointmentItem
+                    item={item}
+                    showDeleteAlert={showDeleteAlert}
+                  />
+                )}
+                keyExtractor={(appointment) => appointment.id.toString()}
+                ListHeaderComponent={() => (
+                  <View className="flex p-1 gap-3 flex-row w-full justify-between bg-primary">
+                    <View className="flex flex-row flex-1 justify-between">
+                      <Text className="font-bold text-lg w-16 text-center text-white">
+                        Doctor
+                      </Text>
+                      <Text className="font-bold text-lg w-16 text-center text-white">
+                        User Id
+                      </Text>
+                      <Text className="font-bold text-lg w-16 text-center text-white">
+                        Date
+                      </Text>
+                      <Text className="font-bold text-lg w-16 text-center text-white">
+                        Status
                       </Text>
                     </View>
-                  )}
-                  contentContainerStyle={{ paddingBottom: 100 }}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                    />
-                  }
-                />
-              </View>
-            )}
-          </View>
-        )}
+                  </View>
+                )}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              />
+            </View>
+          )}
+        </View>
       </ContainerView>
     </SafeAreaView>
   );
