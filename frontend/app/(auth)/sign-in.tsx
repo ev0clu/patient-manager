@@ -17,7 +17,7 @@ const SignIn = () => {
   const [errorText, setErrorText] = useState<string | undefined>();
   const [submitting, setSubmitting] = useState(false);
 
-  const { setIsLogged } = useAuthContext();
+  const { setIsLogged, setUserInfo } = useAuthContext();
 
   const {
     control,
@@ -50,12 +50,15 @@ const SignIn = () => {
       const accessToken = response.headers.get("Authorization");
       const refreshToken = response.headers.get("X-Refresh-Token");
 
+      const body = await response.json();
+
       if (response.ok) {
         if (accessToken && refreshToken) {
           saveAccessToken(accessToken);
           saveRefreshToken(refreshToken);
 
           setSubmitting(false);
+          setUserInfo(body.userInfo);
           setIsLogged(true);
           router.replace("/appointments", { relativeToDirectory: true });
           reset({
@@ -65,7 +68,7 @@ const SignIn = () => {
         }
       } else {
         setSubmitting(false);
-        const body = await response.json();
+
         if (body.error) {
           setErrorText(body.error);
         }
