@@ -1,43 +1,59 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Redirect, Tabs } from "expo-router";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { HapticTab } from "@/components/HapticTab";
+import { useAuthContext } from "@/context/AuthProvider";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { isLogged } = useAuthContext();
 
+  if (!isLogged) return <Redirect href="/sign-in" />;
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+        tabBarActiveTintColor: "#059669",
+        tabBarInactiveTintColor: "#ecfdf5",
+        tabBarShowLabel: true,
+        tabBarStyle: {
+          backgroundColor: "#000000",
+          borderTopWidth: 1,
+          borderTopColor: "#232533",
+          /* height: 80,
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",*/
+        },
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="appointments"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Appointments",
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="calendar" size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="create-appointment"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "New Appointment",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="calendar-plus-o" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" size={24} color={color} />
+          ),
         }}
       />
     </Tabs>
