@@ -62,10 +62,12 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
         const accessToken = generateJwtAccessToken(user.id);
         const refreshToken = generateJwtRefreshToken(user.id);
 
+        const userInfo = { username: user.username, email: user.email, role: user.role };
+
         res.status(200)
             .header('Authorization', accessToken)
             .header('X-Refresh-Token', refreshToken)
-            .json({ message: 'Authentication succeed' });
+            .json({ message: 'Authentication succeed', userInfo });
     } catch (err) {
         next(err);
     }

@@ -153,7 +153,8 @@ describe('POST /login', () => {
         expect(res.headers['x-refresh-token'][0]).toBeTruthy();
         expect(res.status).toEqual(200);
         expect(res.body).toEqual({
-            message: 'Authentication succeed'
+            message: 'Authentication succeed',
+            userInfo: { username: 'john', email: email, role: 'USER' }
         });
     });
 
