@@ -12,7 +12,7 @@ import {
   getRefreshToken,
   saveAccessToken,
 } from "@/lib/secure-store";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import {
   View,
@@ -25,6 +25,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Appointments = () => {
+  const queryClient = useQueryClient();
   const { setIsLogged } = useAuthContext();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -62,9 +63,15 @@ const Appointments = () => {
                 id
               );
 
+              queryClient.invalidateQueries({ queryKey: ["appointments"] });
+              queryClient.invalidateQueries({ queryKey: ["doctors"] });
+
               return body;
             } catch (error) {
-              if (error === "access-token-expired") {
+              if (
+                error instanceof Error &&
+                error.message === "access-token-expired"
+              ) {
                 console.log("Access token expired, refreshing token...");
                 try {
                   const accessToken = await fetchRefreshAccessToken(
@@ -82,10 +89,14 @@ const Appointments = () => {
                     id
                   );
 
+                  queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                  queryClient.invalidateQueries({ queryKey: ["doctors"] });
+
                   return body;
                 } catch (error) {
                   setIsLogged(false);
-                  throw new Error("An unexpected error is occured");
+
+                  throw new Error("Token refresh failed");
                 }
               }
               throw new Error("An unexpected error is occured");
@@ -114,7 +125,10 @@ const Appointments = () => {
 
         return body;
       } catch (error) {
-        if (error === "access-token-expired") {
+        if (
+          error instanceof Error &&
+          error.message === "access-token-expired"
+        ) {
           console.log("Access token expired, refreshing token...");
           try {
             const newAccessToken = await fetchRefreshAccessToken(refreshToken);
@@ -132,7 +146,8 @@ const Appointments = () => {
             return body;
           } catch (error) {
             setIsLogged(false);
-            throw new Error("An unexpected error is occured");
+
+            throw new Error("Token refresh failed");
           }
         }
         throw new Error("An unexpected error is occured");
@@ -183,13 +198,10 @@ const Appointments = () => {
                       <Text className="font-bold text-lg w-16 text-center text-white">
                         Doctor
                       </Text>
-                      <Text className="font-bold text-lg w-16 text-center text-white">
-                        User Id
-                      </Text>
-                      <Text className="font-bold text-lg w-16 text-center text-white">
+                      <Text className="font-bold text-lg w-40 text-center text-white">
                         Date
                       </Text>
-                      <Text className="font-bold text-lg w-16 text-center text-white">
+                      <Text className="font-bold text-lg w-28 text-center text-white">
                         Status
                       </Text>
                     </View>
