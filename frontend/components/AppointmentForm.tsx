@@ -37,14 +37,11 @@ const AppointmentForm = ({
   doctors,
   error,
 }: AppointmentFormProps) => {
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string>(
-    doctors[0].id.toString()
-  );
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
 
   return (
     <>
       <View className="mb-5 w-full">
-        {error && <ErrorText title={error.message} />}
         <View>
           <Text className="text-base font-medium text-white">Doctor</Text>
           <Controller
@@ -61,13 +58,18 @@ const AppointmentForm = ({
                     setSelectedDoctorId(selectedValue);
                   }}
                 >
-                  {doctors?.map((doctor) => (
-                    <Picker.Item
-                      key={doctor.id}
-                      label={doctor.name}
-                      value={doctor.id}
-                    />
-                  ))}
+                  <Picker.Item value="" label="Choose doctor" />
+                  {doctors
+                    ?.filter((doctor) =>
+                      doctor.slots.some((slot) => slot.booked === false)
+                    )
+                    .map((doctor) => (
+                      <Picker.Item
+                        key={doctor.id}
+                        label={doctor.name}
+                        value={doctor.id}
+                      />
+                    ))}
                 </Picker>
               </View>
             )}
@@ -112,6 +114,7 @@ const AppointmentForm = ({
                     selectedValue={value}
                     onValueChange={onChange}
                   >
+                    <Picker.Item value="" label="Choose status" />
                     {STATUS.map((item, index) => (
                       <Picker.Item
                         key={item + index}
@@ -142,9 +145,11 @@ const AppointmentForm = ({
                   selectedValue={value}
                   onValueChange={onChange}
                 >
+                  <Picker.Item value="" label="Choose date" />
                   {doctors
                     .find((doctor) => doctor.id.toString() === selectedDoctorId)
-                    ?.slots.map((slot) => (
+                    ?.slots.filter((slot) => !slot.booked)
+                    .map((slot) => (
                       <Picker.Item
                         key={slot.id}
                         label={format(new Date(slot.date), "dd-MM-yyyy HH:mm")}
@@ -168,6 +173,12 @@ const AppointmentForm = ({
           />
         </View>
       </View>
+
+      {error && (
+        <View className="flex items-center">
+          <ErrorText title={error.message} />
+        </View>
+      )}
     </>
   );
 };
