@@ -42,7 +42,10 @@ const CreateAppointment = () => {
 
         return body;
       } catch (error) {
-        if (error === "access-token-expired") {
+        if (
+          error instanceof Error &&
+          error.message === "access-token-expired"
+        ) {
           console.log("Access token expired, refreshing token...");
           try {
             const newAccessToken = await fetchRefreshAccessToken(refreshToken);
@@ -57,10 +60,11 @@ const CreateAppointment = () => {
             return body;
           } catch (error) {
             setIsLogged(false);
-            throw new Error("An unexpected error is occured");
+
+            throw new Error("Token refresh failed");
           }
         }
-        throw new Error("An unexpected error is occured");
+        throw new Error("An unexpected error is occured during get doctors");
       }
     },
   });
@@ -73,11 +77,9 @@ const CreateAppointment = () => {
   } = useForm<appointmentType>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      doctorId: queryDoctors.data ? queryDoctors.data[0].id.toString() : "",
+      doctorId: "",
       description: undefined,
-      slotId: queryDoctors.data
-        ? queryDoctors.data[0].slots[0].id.toString()
-        : "",
+      slotId: "",
     },
   });
 
@@ -98,11 +100,14 @@ const CreateAppointment = () => {
 
         return body;
       } catch (error) {
-        if (error === "access-token-expired") {
+        if (
+          error instanceof Error &&
+          error.message === "access-token-expired"
+        ) {
           console.log("Access token expired, refreshing token...");
           try {
             const newAccessToken = await fetchRefreshAccessToken(refreshToken);
-
+            console.log(newAccessToken);
             if (!newAccessToken)
               throw new Error("Unable to refresh access token");
 
@@ -117,16 +122,22 @@ const CreateAppointment = () => {
             return body;
           } catch (error) {
             setIsLogged(false);
-            throw new Error("An unexpected error is occured");
+
+            throw new Error("Token refresh failed");
           }
         }
-        throw new Error("An unexpected error is occured");
+
+        throw new Error("An unexpected error is occured during creation");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["appointments"] }),
+        queryClient.invalidateQueries({ queryKey: ["doctors"] }),
+      ]);
       router.replace("/appointments", { relativeToDirectory: true });
+      reset({ doctorId: "", description: undefined, slotId: "" });
     },
   });
 
