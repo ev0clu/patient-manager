@@ -12,47 +12,42 @@ interface AppointmentItemProps {
 
 const AppointmentItem = ({ item, showDeleteAlert }: AppointmentItemProps) => {
   return (
-    <View className="flex gap-3 flex-row w-full justify-between my-1 px-1 py-5 border border-stone-500">
+    <View className="flex gap-2 flex-col w-full justify-between my-1 px-1 py-5 border border-stone-500">
       <Pressable
-        className="flex flex-row w-10 flex-1 justify-between"
+        className="flex flex-row justify-between items-center"
         onPress={() => router.navigate(`/appointments/${item.id}`)}
       >
-        <Image
-          source={
-            DOCTORS.find((doctor) => doctor.name === item.doctor.name)?.image
-          }
-          style={{
-            width: 300,
-            height: 250,
-            marginVertical: 10,
-            resizeMode: "contain",
-            borderRadius: 30,
-          }}
-          resizeMode="cover"
-        />
+        <View className="flex flex-col gap-1 items-center">
+          <Image
+            source={
+              DOCTORS.find((doctor) => doctor.name === item.doctor.name)?.image
+            }
+            style={{
+              width: 40,
+              height: 40,
+              marginVertical: 10,
+              resizeMode: "contain",
+              borderRadius: 30,
+            }}
+            resizeMode="cover"
+          />
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            className="w-16 text-center text-lg text-white"
+          >
+            {item.doctor.name}
+          </Text>
+        </View>
         <Text
           numberOfLines={1}
           ellipsizeMode="tail"
-          className="w-16 text-center text-lg text-white"
-        >
-          {item.doctor.name}
-        </Text>
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          className="w-16 text-center text-lg text-white"
-        >
-          {item.userId}
-        </Text>
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          className="w-16 text-center text-lg text-white"
+          className="w-40 text-center text-base text-white"
         >
           {format(new Date(item.slot.date), "dd-MM-yyyy HH:mm")}
         </Text>
         <Text
-          className={cn("w-16 text-center text-md font-bold", {
+          className={cn("w-28 text-center text-base font-bold", {
             "text-green-600": item.status === "SCHEDULED",
             "text-yellow-600": item.status === "PENDING",
             "text-rose-600": item.status === "CANCELLED",
@@ -61,15 +56,19 @@ const AppointmentItem = ({ item, showDeleteAlert }: AppointmentItemProps) => {
           {item.status}
         </Text>
       </Pressable>
-
-      <Pressable onPress={() => showDeleteAlert(item.id)} className="w-16">
-        <AntDesign
-          name="delete"
-          size={24}
-          color="black"
-          className="text-center"
-        />
-      </Pressable>
+      <View className="flex items-end">
+        <Pressable
+          onPress={() => showDeleteAlert(item.id)}
+          className="w-16 text-right"
+        >
+          <AntDesign
+            name="delete"
+            size={20}
+            color="#f43f5e"
+            className="text-center"
+          />
+        </Pressable>
+      </View>
     </View>
   );
 };
