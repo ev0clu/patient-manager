@@ -186,5 +186,5 @@ export const fetchRefreshAccessToken = async (
     throw new Error(`${body.error}`);
   }
 
-  return body.accessToken as string;
+  return accessToken as string;
 };
