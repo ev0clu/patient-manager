@@ -61,7 +61,7 @@ export const fetchDeleteAppointment = async (
   const response = await fetch(
     `${env.EXPO_PUBLIC_API_URL}/appointments/${id}`,
     {
-      method: "GET",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `${accessToken}`,
