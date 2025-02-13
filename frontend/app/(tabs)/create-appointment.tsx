@@ -3,14 +3,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  appointmentSchema,
-  appointmentType,
+  createAppointmentSchema,
+  createAppointmentType,
 } from "@/schemas/appointmentSchema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ContainerView from "@/components/ContainerView";
 import { useAuthContext } from "@/context/AuthProvider";
 import ErrorText from "@/components/ErrorText";
-import AppointmentForm from "@/components/AppointmentForm";
+import CreateAppointmentForm from "@/components/CreateAppointmentForm";
 import {
   getAccessToken,
   getRefreshToken,
@@ -26,7 +26,7 @@ import { router } from "expo-router";
 const CreateAppointment = () => {
   const queryClient = useQueryClient();
 
-  const { setIsLogged, userInfo } = useAuthContext();
+  const { setIsLogged } = useAuthContext();
 
   const queryDoctors = useQuery<Doctor[]>({
     queryKey: ["doctors"],
@@ -74,8 +74,8 @@ const CreateAppointment = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<appointmentType>({
-    resolver: zodResolver(appointmentSchema),
+  } = useForm<createAppointmentType>({
+    resolver: zodResolver(createAppointmentSchema),
     defaultValues: {
       doctorId: "",
       description: undefined,
@@ -84,7 +84,7 @@ const CreateAppointment = () => {
   });
 
   const mutationAppointment = useMutation({
-    mutationFn: async (data: appointmentType) => {
+    mutationFn: async (data: createAppointmentType) => {
       const accessToken = await getAccessToken();
       const refreshToken = await getRefreshToken();
 
@@ -141,7 +141,7 @@ const CreateAppointment = () => {
     },
   });
 
-  const onSubmit = async (data: appointmentType) => {
+  const onSubmit = async (data: createAppointmentType) => {
     await mutationAppointment.mutateAsync(data);
   };
 
@@ -162,18 +162,16 @@ const CreateAppointment = () => {
             </ContainerView>
           </SafeAreaView>
         ) : queryDoctors.data === undefined ? (
-          <Text className="text-3xl font-bold text-white/50">
+          <Text className="text-white/50">
             Currently there is no available doctor. Come back later.
           </Text>
         ) : (
-          <AppointmentForm
+          <CreateAppointmentForm
             errors={errors}
             control={control}
             handleSubmit={handleSubmit}
             onSubmit={onSubmit}
             submitting={mutationAppointment.isPending}
-            type="CREATE"
-            userInfo={userInfo}
             doctors={queryDoctors.data}
             error={mutationAppointment.error}
           />
