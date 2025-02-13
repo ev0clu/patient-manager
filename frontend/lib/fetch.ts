@@ -1,4 +1,7 @@
-import { appointmentType } from "@/schemas/appointmentSchema";
+import {
+  createAppointmentType,
+  updateAppointmentType,
+} from "@/schemas/appointmentSchema";
 import { env } from "./env";
 
 export const fetchGetAllAppointments = async (
@@ -28,7 +31,7 @@ export const fetchGetAllAppointments = async (
 export const fetchGetAppointment = async (
   accessToken: string,
   refreshToken: string,
-  id: number
+  id: string
 ): Promise<Appointment> => {
   const response = await fetch(
     `${env.EXPO_PUBLIC_API_URL}/appointments/${id}`,
@@ -108,7 +111,7 @@ export const fetchGetAllDoctors = async (
 export const fetchPostCreateAppointment = async (
   accessToken: string,
   refreshToken: string,
-  data: appointmentType
+  data: createAppointmentType
 ): Promise<Appointment> => {
   const response = await fetch(`${env.EXPO_PUBLIC_API_URL}/appointments`, {
     method: "POST",
@@ -138,24 +141,26 @@ export const fetchPostCreateAppointment = async (
 export const fetchPutUpdateAppointment = async (
   accessToken: string,
   refreshToken: string,
-  data: appointmentType
+  data: updateAppointmentType,
+  id: string
 ): Promise<Appointment> => {
-  const response = await fetch(`${env.EXPO_PUBLIC_API_URL}/appointments`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${accessToken}`,
-      "X-Refresh-Token": `${refreshToken}`,
-    },
-    credentials: "include",
-    body: JSON.stringify({
-      doctorId: data.doctorId,
-      description: data.description,
-      status: data.status,
-      slotId: data.slotId,
-    }),
-    mode: "cors",
-  });
+  const response = await fetch(
+    `${env.EXPO_PUBLIC_API_URL}/appointments/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${accessToken}`,
+        "X-Refresh-Token": `${refreshToken}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        description: data.description,
+        status: data.status,
+      }),
+      mode: "cors",
+    }
+  );
 
   const body = await response.json();
 
