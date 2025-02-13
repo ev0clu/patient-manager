@@ -10,18 +10,15 @@ import { Picker } from "@react-native-picker/picker";
 import { format } from "date-fns";
 import ErrorText from "./ErrorText";
 import FormInput from "./FormInput";
-import type { appointmentType } from "../schemas/appointmentSchema";
+import type { createAppointmentType } from "../schemas/appointmentSchema";
 import CustomButton from "./CustomButton";
-import { STATUS } from "@/constants/status";
 
 interface AppointmentFormProps {
-  errors: FieldErrors<appointmentType>;
-  control: Control<appointmentType, any>;
-  handleSubmit: UseFormHandleSubmit<appointmentType, undefined>;
-  onSubmit: (data: appointmentType) => Promise<void>;
+  errors: FieldErrors<createAppointmentType>;
+  control: Control<createAppointmentType, any>;
+  handleSubmit: UseFormHandleSubmit<createAppointmentType, undefined>;
+  onSubmit: (data: createAppointmentType) => Promise<void>;
   submitting: boolean;
-  type: "UPDATE" | "CREATE";
-  userInfo: UserInfo;
   doctors: Doctor[];
   error: Error | null;
 }
@@ -32,8 +29,6 @@ const AppointmentForm = ({
   handleSubmit,
   onSubmit,
   submitting,
-  type,
-  userInfo,
   doctors,
   error,
 }: AppointmentFormProps) => {
@@ -61,7 +56,7 @@ const AppointmentForm = ({
                   <Picker.Item value="" label="Choose doctor" />
                   {doctors
                     ?.filter((doctor) =>
-                      doctor.slots.some((slot) => slot.booked === false)
+                      doctor.slots.some((slot) => slot.booked)
                     )
                     .map((doctor) => (
                       <Picker.Item
@@ -100,37 +95,6 @@ const AppointmentForm = ({
             <ErrorText title={errors.description.message} />
           )}
         </View>
-        {userInfo.role === "ADMIN" && (
-          <View>
-            <Text className="text-base font-medium text-white">Status</Text>
-            <Controller
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <View className="border rounded-md border-stone-700 font-semibold text-base text-white">
-                  <Picker
-                    style={{
-                      color: "#FFFFFF",
-                    }}
-                    selectedValue={value}
-                    onValueChange={onChange}
-                  >
-                    <Picker.Item value="" label="Choose status" />
-                    {STATUS.map((item, index) => (
-                      <Picker.Item
-                        key={item + index}
-                        label={item}
-                        value={item}
-                      />
-                    ))}
-                  </Picker>
-                </View>
-              )}
-              name="status"
-              rules={{ required: true }}
-            />
-            {errors.status && <ErrorText title={errors.status.message} />}
-          </View>
-        )}
 
         <View>
           <Text className="text-base font-medium text-white">Time Slot</Text>
@@ -167,7 +131,7 @@ const AppointmentForm = ({
 
         <View className="mx-auto mt-3">
           <CustomButton
-            title={type}
+            title="CREATE"
             onPress={handleSubmit(onSubmit)}
             isLoading={submitting}
           />
