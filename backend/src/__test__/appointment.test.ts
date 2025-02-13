@@ -834,74 +834,6 @@ describe('GET /', () => {
 });
 
 describe('PUT /', () => {
-    test('should return error because of missing doctorId', async () => {
-        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
-
-        const accessToken = resLogin.headers['authorization'];
-        const refreshToken = resLogin.headers['x-refresh-token'];
-
-        const doctors = await prisma.doctor.findMany({
-            include: { slots: true }
-        });
-
-        const resCreateAppointment = await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const res = await request(server)
-            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
-            .send({
-                description: 'test description',
-                status: 'SCHEDULED',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(400);
-        expect(res.body.error).toEqual(`Invalid data`);
-    });
-
-    test('should return error because of missing slotID', async () => {
-        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
-
-        const accessToken = resLogin.headers['authorization'];
-        const refreshToken = resLogin.headers['x-refresh-token'];
-
-        const doctors = await prisma.doctor.findMany({
-            include: { slots: true }
-        });
-
-        const resCreateAppointment = await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const res = await request(server)
-            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
-            .send({ doctorId: doctors[0].id, description: 'test description', status: 'SCHEDULED' })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(400);
-        expect(res.body.error).toEqual(`Invalid data`);
-    });
-
     test('should return error because of wrong status value', async () => {
         const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
 
@@ -926,10 +858,8 @@ describe('PUT /', () => {
         const res = await request(server)
             .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
             .send({
-                doctorId: doctors[0].id,
                 description: 'test description',
-                status: 'ONGOING',
-                slotId: doctors[0].slots[0].id
+                status: 'ONGOING'
             })
             .set('Authorization', accessToken)
             .set('X-Refresh-Token', refreshToken);
@@ -962,10 +892,8 @@ describe('PUT /', () => {
         const res = await request(server)
             .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
             .send({
-                doctorId: doctors[0].id,
                 description: 'test description',
-                status: 'SCHEDULED',
-                slotId: doctors[0].slots[0].id
+                status: 'SCHEDULED'
             })
             .set('Authorization', accessToken)
             .set('X-Refresh-Token', refreshToken);
@@ -1007,10 +935,8 @@ describe('PUT /', () => {
         const res = await request(server)
             .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
             .send({
-                doctorId: doctors[0].id,
                 description: 'test description',
-                status: 'CANCELLED',
-                slotId: doctors[0].slots[0].id
+                status: 'CANCELLED'
             })
             .set('Authorization', accessToken)
             .set('X-Refresh-Token', refreshToken);
@@ -1052,9 +978,7 @@ describe('PUT /', () => {
         const res = await request(server)
             .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
             .send({
-                doctorId: doctors[0].id,
-                status: 'SCHEDULED',
-                slotId: doctors[0].slots[0].id
+                status: 'SCHEDULED'
             })
             .set('Authorization', accessToken)
             .set('X-Refresh-Token', refreshToken);
@@ -1069,173 +993,6 @@ describe('PUT /', () => {
         expect(res.body.appointment.slot.booked).toBeTruthy();
         expect(res.body.appointment).toHaveProperty('createdAt');
         expect(res.body.appointment).toHaveProperty('updatedAt');
-    });
-
-    test('should update task with new slotId', async () => {
-        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
-
-        const accessToken = resLogin.headers['authorization'];
-        const refreshToken = resLogin.headers['x-refresh-token'];
-
-        const doctors = await prisma.doctor.findMany({
-            include: { slots: true }
-        });
-
-        const resCreateAppointment = await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const res = await request(server)
-            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
-            .send({
-                doctorId: doctors[0].id,
-                status: 'PENDING',
-                slotId: doctors[0].slots[1].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(200);
-        expect(res.body.appointment).toHaveProperty('id');
-        expect(res.body.appointment).toHaveProperty('doctorId');
-        expect(res.body.appointment.description).toBe('test description');
-        expect(res.body.appointment).toHaveProperty('status');
-        expect(res.body.appointment).toHaveProperty('slotId');
-        expect(res.body.appointment.slotId).not.toBe(resCreateAppointment.body.appointment.slotId);
-        expect(res.body.appointment.slot.booked).toBeTruthy();
-        expect(res.body.appointment).toHaveProperty('createdAt');
-        expect(res.body.appointment).toHaveProperty('updatedAt');
-    });
-
-    test('should return error because slotId already booked', async () => {
-        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
-
-        const accessToken = resLogin.headers['authorization'];
-        const refreshToken = resLogin.headers['x-refresh-token'];
-
-        const doctors = await prisma.doctor.findMany({
-            include: { slots: true }
-        });
-
-        await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[1].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const resCreateAppointment = await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const res = await request(server)
-            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
-            .send({
-                doctorId: doctors[0].id,
-                status: 'PENDING',
-                slotId: doctors[0].slots[1].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(500);
-        expect(res.body.error).toEqual(`Appointment cannot be booked to this doctor in that slot`);
-    });
-
-    test('should return error because slotId does not exist', async () => {
-        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
-
-        const accessToken = resLogin.headers['authorization'];
-        const refreshToken = resLogin.headers['x-refresh-token'];
-
-        const doctors = await prisma.doctor.findMany({
-            include: { slots: true }
-        });
-
-        const mockSlotId = '123';
-
-        const resCreateAppointment = await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const res = await request(server)
-            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
-            .send({
-                doctorId: doctors[0].id,
-                status: 'PENDING',
-                slotId: mockSlotId
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(500);
-        expect(res.body.error).toEqual(`Slot does not exist`);
-    });
-
-    test('should return error because doctorId does not exist', async () => {
-        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
-
-        const accessToken = resLogin.headers['authorization'];
-        const refreshToken = resLogin.headers['x-refresh-token'];
-
-        const doctors = await prisma.doctor.findMany({
-            include: { slots: true }
-        });
-
-        const mockDoctorId = '123';
-
-        const resCreateAppointment = await request(server)
-            .post('/api/v1/appointments')
-            .send({
-                doctorId: doctors[0].id,
-                description: 'test description',
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        const res = await request(server)
-            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
-            .send({
-                doctorId: mockDoctorId,
-                status: 'PENDING',
-                slotId: doctors[0].slots[0].id
-            })
-            .set('Authorization', accessToken)
-            .set('X-Refresh-Token', refreshToken);
-
-        expect(res.headers['content-type']).toMatch(/json/);
-        expect(res.status).toEqual(500);
-        expect(res.body.error).toEqual(`Doctor does not exist`);
     });
 });
 
