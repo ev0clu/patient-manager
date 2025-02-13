@@ -184,19 +184,3 @@ const CreateAppointment = () => {
 };
 
 export default CreateAppointment;
-/*
-<RNPickerSelect
-  onValueChange={onChange}
-  items={DOCTORS.map((item) => ({
-    label: item.name,
-    value: item.name,
-  }))}
-  value={value}
-  placeholder={{ label: "Choose a doctor...", value: null }}
-  useNativeAndroidPickerStyle={false}
-  textInputProps={{
-    className:
-      "border rounded-md px-4 py-2 border-stone-700 font-semibold text-base text-white",
-  }}
-/>;
-*/
