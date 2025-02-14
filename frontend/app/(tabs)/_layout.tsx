@@ -7,7 +7,7 @@ import { HapticTab } from "@/components/HapticTab";
 import { useAuthContext } from "@/context/AuthProvider";
 
 export default function TabLayout() {
-  const { isLogged } = useAuthContext();
+  const { isLogged, userInfo } = useAuthContext();
 
   if (!isLogged) return <Redirect href="/sign-in" />;
   return (
@@ -38,6 +38,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="create-appointment"
         options={{
@@ -45,8 +46,10 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <FontAwesome name="calendar-plus-o" size={24} color={color} />
           ),
+          href: userInfo && userInfo.role === "USER" ? undefined : null,
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
