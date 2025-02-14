@@ -44,6 +44,15 @@ const UpdateAppointmentForm = ({
           </Text>
         </View>
 
+        {userInfo && userInfo.role === "ADMIN" && (
+          <View>
+            <Text className="text-base font-medium text-white">UserId</Text>
+            <Text className="border rounded-md px-5 py-4 border-stone-700 font-semibold text-lg text-white/50">
+              {appointment.userId}
+            </Text>
+          </View>
+        )}
+
         <View>
           <Text className="text-base font-medium text-white">Description</Text>
           <Controller
