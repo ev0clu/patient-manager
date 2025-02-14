@@ -13,7 +13,7 @@ import FormInput from "./FormInput";
 import type { createAppointmentType } from "../schemas/appointmentSchema";
 import CustomButton from "./CustomButton";
 
-interface AppointmentFormProps {
+interface CreateAppointmentFormProps {
   errors: FieldErrors<createAppointmentType>;
   control: Control<createAppointmentType, any>;
   handleSubmit: UseFormHandleSubmit<createAppointmentType, undefined>;
@@ -23,7 +23,7 @@ interface AppointmentFormProps {
   error: Error | null;
 }
 
-const AppointmentForm = ({
+const CreateAppointmentForm = ({
   errors,
   control,
   handleSubmit,
@@ -31,7 +31,7 @@ const AppointmentForm = ({
   submitting,
   doctors,
   error,
-}: AppointmentFormProps) => {
+}: CreateAppointmentFormProps) => {
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
 
   return (
@@ -56,7 +56,7 @@ const AppointmentForm = ({
                   <Picker.Item value="" label="Choose doctor" />
                   {doctors
                     ?.filter((doctor) =>
-                      doctor.slots.some((slot) => slot.booked)
+                      doctor.slots.some((slot) => !slot.booked)
                     )
                     .map((doctor) => (
                       <Picker.Item
@@ -147,4 +147,4 @@ const AppointmentForm = ({
   );
 };
 
-export default AppointmentForm;
+export default CreateAppointmentForm;
