@@ -19,7 +19,7 @@ interface UpdateAppointmentFormProps {
   handleSubmit: UseFormHandleSubmit<updateAppointmentType, undefined>;
   onSubmit: (data: updateAppointmentType) => Promise<void>;
   submitting: boolean;
-  userInfo: UserInfo;
+  userInfo: UserInfo | null;
   appointment: Appointment;
   error: Error | null;
 }
@@ -65,7 +65,7 @@ const UpdateAppointmentForm = ({
             <ErrorText title={errors.description.message} />
           )}
         </View>
-        {userInfo.role === "ADMIN" && (
+        {userInfo && userInfo.role === "ADMIN" && (
           <View>
             <Text className="text-base font-medium text-white">Status</Text>
             <Controller
