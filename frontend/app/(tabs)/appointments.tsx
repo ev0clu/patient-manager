@@ -64,6 +64,7 @@ const Appointments = () => {
               );
 
               queryClient.invalidateQueries({ queryKey: ["appointments"] });
+              queryClient.invalidateQueries({ queryKey: ["appointment"] });
               queryClient.invalidateQueries({ queryKey: ["doctors"] });
 
               return body;
@@ -90,6 +91,7 @@ const Appointments = () => {
                   );
 
                   queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                  queryClient.invalidateQueries({ queryKey: ["appointment"] });
                   queryClient.invalidateQueries({ queryKey: ["doctors"] });
 
                   return body;
