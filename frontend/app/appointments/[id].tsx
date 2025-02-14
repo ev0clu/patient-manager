@@ -33,8 +33,7 @@ const Appointment = () => {
 
   useFocusEffect(
     useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ["appointment"] }),
-        reset({ description: undefined, status: "PENDING" });
+      queryClient.invalidateQueries({ queryKey: ["appointment"] });
     }, [])
   );
 
@@ -90,7 +89,6 @@ const Appointment = () => {
   const {
     control,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm<updateAppointmentType>({
