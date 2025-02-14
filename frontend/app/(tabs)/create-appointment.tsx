@@ -141,10 +141,10 @@ const CreateAppointment = () => {
       // Invalidate and refetch
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["appointments"] }),
+        queryClient.invalidateQueries({ queryKey: ["appointment"] }),
         queryClient.invalidateQueries({ queryKey: ["doctors"] }),
       ]);
       router.replace("/appointments", { relativeToDirectory: true });
-      reset({ doctorId: "", description: undefined, slotId: "" });
     },
   });
 
