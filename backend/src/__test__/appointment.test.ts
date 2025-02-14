@@ -954,6 +954,68 @@ describe('PUT /', () => {
         expect(res.body.appointment).toHaveProperty('updatedAt');
     });
 
+    test('should update task with Admin account from PENDING to CANCELLED status', async () => {
+        const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
+
+        const accessToken = resLogin.headers['authorization'];
+        const refreshToken = resLogin.headers['x-refresh-token'];
+
+        const doctors = await prisma.doctor.findMany({
+            include: { slots: true }
+        });
+
+        const resCreateAppointment = await request(server)
+            .post('/api/v1/appointments')
+            .send({
+                doctorId: doctors[0].id,
+                description: 'test description',
+                status: 'PENDING',
+                slotId: doctors[0].slots[0].id
+            })
+            .set('Authorization', accessToken)
+            .set('X-Refresh-Token', refreshToken);
+
+        // Admin preparation
+        await request(server).post('/api/v1/auth/register').send({
+            username: 'admin2',
+            email: 'admin2@patient.com',
+            password: '4321',
+            phone: '+36504323445',
+            role: 'ADMIN'
+        });
+
+        const resLoginAdmin = await request(server)
+            .post('/api/v1/auth/login')
+            .send({ email: 'admin2@patient.com', password: '4321' });
+
+        const accessTokenAdmin = resLoginAdmin.headers['authorization'];
+        const refreshTokenAdmin = resLoginAdmin.headers['x-refresh-token'];
+
+        await request(server)
+            .put(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
+            .send({ description: 'test description', status: 'CANCELLED' })
+            .set('Authorization', accessTokenAdmin)
+            .set('X-Refresh-Token', refreshTokenAdmin);
+
+        const resGetAppointment = await request(server)
+            .get(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
+            .set('Authorization', accessTokenAdmin)
+            .set('X-Refresh-Token', refreshTokenAdmin);
+
+        // Admin expectation
+        expect(resGetAppointment.headers['content-type']).toMatch(/json/);
+        expect(resGetAppointment.status).toEqual(200);
+        expect(resGetAppointment.body.appointment).toHaveProperty('id');
+        expect(resGetAppointment.body.appointment).toHaveProperty('doctorId');
+        expect(resGetAppointment.body.appointment).toHaveProperty('description');
+        expect(resGetAppointment.body.appointment).toHaveProperty('status');
+        expect(resGetAppointment.body.appointment.status).toBe('CANCELLED');
+        expect(resGetAppointment.body.appointment).toHaveProperty('slotId');
+        expect(resGetAppointment.body.appointment.slot.booked).toBeTruthy();
+        expect(resGetAppointment.body.appointment).toHaveProperty('createdAt');
+        expect(resGetAppointment.body.appointment).toHaveProperty('updatedAt');
+    });
+
     test('should update task without description', async () => {
         const resLogin = await request(server).post('/api/v1/auth/login').send({ email, password });
 

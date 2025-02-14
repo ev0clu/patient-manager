@@ -126,14 +126,13 @@ export const createAppointment = async (req: Request, res: Response, next: NextF
 
 export const updateAppointment = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const userId = req.userId;
 
     const body = updateAppointmentSchema.parse(req.body);
     const { description, status } = body;
 
     try {
         const appointment = await prisma.appointment.findUnique({
-            where: { id, userId }
+            where: { id }
         });
 
         if (!appointment) {
@@ -161,11 +160,10 @@ export const updateAppointment = async (req: Request, res: Response, next: NextF
 
 export const deleteAppointment = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const userId = req.userId;
 
     try {
         const appointment = await prisma.appointment.findUnique({
-            where: { id, userId }
+            where: { id }
         });
         if (!appointment) {
             res.status(500).json({
