@@ -18,8 +18,8 @@ type AuthContextType = {
   clearTokenStorage: () => void;
   isLogged: boolean;
   setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
-  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo>>;
-  userInfo: UserInfo;
+  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo | null>>;
+  userInfo: UserInfo | null;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -29,18 +29,14 @@ const AuthContext = createContext<AuthContextType>({
   isLogged: false,
   setIsLogged: () => {},
   setUserInfo: () => {},
-  userInfo: { username: "", email: "", role: "USER" },
+  userInfo: null,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    username: "",
-    email: "",
-    role: "USER",
-  });
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -63,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAccessToken(null);
     setRefreshToken(null);
     setIsLogged(false);
-    setUserInfo({ username: "", email: "", role: "USER" });
+    setUserInfo(null);
   }, [isLogged]);
 
   const contextValue = useMemo(
@@ -76,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUserInfo,
       userInfo,
     }),
-    [accessToken, refreshToken, isLogged]
+    [accessToken, refreshToken, isLogged, userInfo]
   );
 
   return (
