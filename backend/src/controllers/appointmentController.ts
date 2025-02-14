@@ -172,9 +172,17 @@ export const deleteAppointment = async (req: Request, res: Response, next: NextF
                 error: `Appointment does not exist`
             });
         } else {
-            await prisma.appointment.delete({
-                where: { id }
-            });
+            await prisma.$transaction([
+                prisma.slot.update({
+                    where: { id: appointment.slotId },
+                    data: { booked: false }
+                }),
+
+                prisma.appointment.delete({
+                    where: { id }
+                })
+            ]);
+
             res.status(200).json({
                 message: 'Appointment deleted successfully'
             });

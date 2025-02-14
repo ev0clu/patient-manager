@@ -1034,6 +1034,8 @@ describe('DELETE /', () => {
             .set('Authorization', accessToken)
             .set('X-Refresh-Token', refreshToken);
 
+        const slotId = resCreateAppointment.body.appointment.slotId;
+
         const resDeleteAppointment = await request(server)
             .delete(`/api/v1/appointments/${resCreateAppointment.body.appointment.id}`)
             .set('Authorization', accessToken)
@@ -1044,10 +1046,15 @@ describe('DELETE /', () => {
             .set('Authorization', accessToken)
             .set('X-Refresh-Token', refreshToken);
 
+        const resGetSlot = await prisma.slot.findUnique({
+            where: { id: slotId }
+        });
+
         expect(resDeleteAppointment.headers['content-type']).toMatch(/json/);
         expect(resDeleteAppointment.status).toEqual(200);
         expect(resDeleteAppointment.body.message).toEqual('Appointment deleted successfully');
         expect(resGetAppointment.status).toEqual(500);
         expect(resGetAppointment.body.error).toEqual(`Appointment does not exist`);
+        expect(resGetSlot.booked).toBeFalsy();
     });
 });
