@@ -94,14 +94,14 @@ const Appointment = () => {
   } = useForm<updateAppointmentType>({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
-      description: queryAppointment.data?.description,
-      status: queryAppointment.data?.status,
+      description: queryAppointment.data?.description || "",
+      status: queryAppointment.data?.status || "PENDING",
     },
   });
 
   useEffect(() => {
-    setValue("description", queryAppointment.data?.description);
-    setValue("status", queryAppointment.data?.status);
+    setValue("description", queryAppointment.data?.description || "");
+    setValue("status", queryAppointment.data?.status || "PENDING");
   }, [queryAppointment.data]);
 
   const mutationAppointment = useMutation({
