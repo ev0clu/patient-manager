@@ -1,31 +1,30 @@
 # **Patient Manager App**
 
-A health care full stack CRUD app has built with React Native framework, Nativewind, Nest.js, PostgreSQL, Docker and more. The app allows users to log in and booking an appointment to doctors or cancel a previous one. There is an admin part of the application also, where doctors can accept or reject the appointment. Additionally, users can update or remove their profile.
+A health care full stack CRUD app has built with React Native framework, Nativewind, Express.js, PostgreSQL, Docker and more. The app allows users to log in and book appointment to doctors or delete a previous one. There is an admin part of the application also, where doctors can accept or reject the appointment. Additionally, users can update or remove their appointments.
 
-<!--
 ### Login:
+
 - **Admin**:
-   - email: admin@patient.com
-   - password: admin1234
+  - email: admin@patient.com
+  - password: admin1234
 - **User**:
-   - email: test@example.com
-   - password: 1234
+  - email: test@example.com
+  - password: 1234
 
 ### Demo video: [Link](https://github.com/ev0clu/patient-manager/blob/main/demo.mp4)
--->
 
 ## Features
 
 - Allow user to sign up and sing in to the platform
 - Only those appointments are visible to users which are created by themself
-- Booked appointment are marked as not available
-- Only authorized users can book a new appointment or cancel an already exist one
-- Authorized users can update or delete their profiles
+- Booked appointment are filtered out from the list, thefore double booking not possible
+- Only authorized users can book new appointment or delete an already exist one
+- Authorized users can see their profile informations
 - Typescript is used on frontend and backend to ensure everyting are type safety
 - React Native is used for frontend
 - NativeWind is used to stlye components
 - Tanstack query is used to communicate with the backend and cache data
-- Nest.js is used for backend
+- Express.js is used for backend
 - PostgreSQL is used to store data
 - Docker is used to run database locally
 - JWT is used to handle login and allow access to the platform
@@ -56,6 +55,7 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
 8. Run `npm run dev`
 9. Backend server running at `http://localhost:5000/`
 10. Run `npm run prisma:studio` if you would like to see the database content
+    +1 If you want to reset the database run `npx prisma db seed` then seed the db again with `npm run prisma:studio`
 
 #### How to run backend test
 
@@ -84,6 +84,7 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
 - [Expo Go](https://expo.dev/go)
 - [Typescript](https://www.typescriptlang.org/)
 - [React Hook Form](https://react-hook-form.com/)
+- [Tanstack Query](https://tanstack.com/query/latest)
 - [Express.js](https://expressjs.com/)
 - [Prisma](https://www.prisma.io/)
 - [Docker](https://www.docker.com/)
