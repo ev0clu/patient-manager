@@ -1,5 +1,7 @@
 import { ActivityIndicator, Text } from "react-native";
 import { useForm } from "react-hook-form";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -21,12 +23,17 @@ import {
   fetchPostCreateAppointment,
   fetchRefreshAccessToken,
 } from "@/lib/fetch";
-import { router } from "expo-router";
 
 const CreateAppointment = () => {
   const queryClient = useQueryClient();
 
   const { setIsLogged } = useAuthContext();
+
+  useFocusEffect(
+    useCallback(() => {
+      reset({ doctorId: "", description: undefined, slotId: "" });
+    }, [])
+  );
 
   const queryDoctors = useQuery<Doctor[]>({
     queryKey: ["doctors"],

@@ -1,12 +1,13 @@
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { View, Text } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import {
   type Control,
   Controller,
   type FieldErrors,
   UseFormHandleSubmit,
 } from "react-hook-form";
-import { View, Text } from "react-native";
-import { useState } from "react";
-import { Picker } from "@react-native-picker/picker";
 import { format } from "date-fns";
 import ErrorText from "./ErrorText";
 import FormInput from "./FormInput";
@@ -33,6 +34,12 @@ const CreateAppointmentForm = ({
   error,
 }: CreateAppointmentFormProps) => {
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedDoctorId("");
+    }, [])
+  );
 
   return (
     <>
@@ -113,6 +120,11 @@ const CreateAppointmentForm = ({
                   {doctors
                     .find((doctor) => doctor.id.toString() === selectedDoctorId)
                     ?.slots.filter((slot) => !slot.booked)
+                    .sort((a: Slot, b: Slot) => {
+                      return (
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                      );
+                    })
                     .map((slot) => (
                       <Picker.Item
                         key={slot.id}
