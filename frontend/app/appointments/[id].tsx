@@ -21,7 +21,8 @@ import {
   fetchPutUpdateAppointment,
   fetchRefreshAccessToken,
 } from "@/lib/fetch";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect } from "react";
 
 const Appointment = () => {
   const queryClient = useQueryClient();
@@ -30,8 +31,15 @@ const Appointment = () => {
 
   const { setIsLogged, userInfo } = useAuthContext();
 
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({ queryKey: ["appointment"] }),
+        reset({ description: undefined, status: "PENDING" });
+    }, [])
+  );
+
   const queryAppointment = useQuery<Appointment>({
-    queryKey: ["appointment", id],
+    queryKey: ["appointment"],
     queryFn: async () => {
       const accessToken = await getAccessToken();
       const refreshToken = await getRefreshToken();
@@ -83,6 +91,7 @@ const Appointment = () => {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<updateAppointmentType>({
     resolver: zodResolver(updateAppointmentSchema),
@@ -91,6 +100,11 @@ const Appointment = () => {
       status: queryAppointment.data?.status,
     },
   });
+
+  useEffect(() => {
+    setValue("description", queryAppointment.data?.description);
+    setValue("status", queryAppointment.data?.status);
+  }, [queryAppointment.data]);
 
   const mutationAppointment = useMutation({
     mutationFn: async (data: updateAppointmentType) => {
@@ -149,10 +163,6 @@ const Appointment = () => {
         queryClient.invalidateQueries({ queryKey: ["doctors"] }),
       ]);
       router.replace("/appointments", { relativeToDirectory: true });
-      reset({
-        description: undefined,
-        status: "PENDING",
-      });
     },
   });
 
