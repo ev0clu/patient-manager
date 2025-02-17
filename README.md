@@ -54,8 +54,9 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
 7. Run `npm run prisma:seed` to add admin registration into the database. _email_: `admin@patient.com`, _password_: `admin1234`
 8. Run `npm run dev`
 9. Backend server running at `http://localhost:5000/`
-10. Run `npm run prisma:studio` if you would like to see the database content
-    +1 If you want to reset the database run `npx prisma db seed` then seed the db again with `npm run prisma:studio`
+10. Run `npm run prisma:studio` if you would like to see the database content<br>
+
+If you want to reset the database run `npx prisma db push --force-reset` then seed the db again with `npm run prisma:seed`
 
 #### How to run backend test
 
