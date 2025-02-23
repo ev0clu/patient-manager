@@ -50,7 +50,7 @@ Install Docker and Docker compose. Docker desktop automatically installs Docker 
    docker compose --env-file .env -f docker-compose.dev.yml -p patient-manager-dev up -d
    ```
 
-6. Run `npm run prisma:migrate` to migrate and push the schema to database
+6. Run `npm run prisma:migrate-dev` to migrate and push the schema to database
 7. Run `npm run prisma:seed` to add admin registration into the database. _email_: `admin@patient.com`, _password_: `admin1234`
 8. Run `npm run dev`
 9. Backend server running at `http://localhost:5000/`
